@@ -1,14 +1,14 @@
 defmodule MemoryWeb.GamesChannel do
   use MemoryWeb, :channel
 
-  def join("games:" <> name, payload, socket) do
+  alias Memory.Game
+  alias Memory.GameServer
+
+  def join("games:" <> game, payload, socket) do
     if authorized?(payload) do
-      game = Memory.BackupAgent.get(name) || Memory.Game.new()
-      socket = socket
-      |> assign(:game, game)
-      |> assign(:name, name)
-      Memory.BackupAgent.put(name, game)
-      {:ok, %{"join" => name, "game" => Memory.Game.client_view(game)}, socket}
+      socket = assign(socket, :game, game)
+      view = GameServer.view(socket.assigns[:user])
+      {:ok, %{"join" => game, "game" => view}, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -16,26 +16,23 @@ defmodule MemoryWeb.GamesChannel do
 
   def handle_in("guess", payload, socket) do
     name = socket.assigns[:name]
-    game = Memory.Game.add_new_guess(socket.assigns[:game], payload)
-    socket = assign(socket, :game, game)
-    Memory.BackupAgent.put(name, game)
-    {:reply, {:ok, %{ "game" => Memory.Game.client_view(game)}}, socket}
+    view = GameServer.guess(socket.assigns[:game], socket.assigns[:user], payload)
+    socket = assign(socket, :game, view)
+    {:reply, {:ok, %{ "game" => view}}, socket}
   end
 
   def handle_in("restart", _payload, socket) do
     name = socket.assigns[:name]
-    game = Memory.Game.new()
-    socket = assign(socket, :game, game)
-    Memory.BackupAgent.put(name, game)
-    {:reply, {:ok, %{ "game" => Memory.Game.client_view(game)}}, socket}
+    view = GameServer.restart(socket.assigns[:game], socket.assigns[:user])
+    socket = assign(socket, :game, view)
+    {:reply, {:ok, %{ "game" => view}}, socket}
   end
 
   def handle_in("eval", _payload, socket) do
     name = socket.assigns[:name]
-    game = Memory.Game.eval_guesses(socket.assigns[:game])
-    socket = assign(socket, :game, game)
-    Memory.BackupAgent.put(name, game)
-    {:reply, {:ok, %{ "game" => Memory.Game.client_view(game)}}, socket}
+    view = GameServer.eval(socket.assigns[:game], socket.assigns[:user])
+    socket = assign(socket, :game, view)
+    {:reply, {:ok, %{ "game" => view}}, socket}
   end
 
   # Channels can be used in a request/response fashion
@@ -50,8 +47,6 @@ defmodule MemoryWeb.GamesChannel do
     broadcast socket, "shout", payload
     {:noreply, socket}
   end
-
-
 
   # Add authorization logic here as required.
   defp authorized?(_payload) do

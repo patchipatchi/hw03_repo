@@ -23,19 +23,20 @@ import game_init from "./starter-game";
 function form_init() {
   $('#game-button').click(() => {
     let xx = $('#game-input').val();
-    window.location='game/' + xx;
+    window.location = 'game/' + xx;
   });
 }
 
 function start() {
   let root = document.getElementById('root');
   if (root) {
+    socket.connect();
     let channel = socket.channel("games:" + window.gameName, {});
     // We want to join in the react component.
     game_init(root, channel);
   }
 
-  if (document.getElementById('game-input')){
+  if (document.getElementById('game-input')) {
     form_init();
   }
 }
