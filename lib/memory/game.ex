@@ -20,6 +20,13 @@ defmodule Memory.Game do
 
   end
 
+  def is_full(game) do
+    false
+  end
+
+  def add_player(game, user) do 
+  end
+
   # The client view 
   def client_view(game_state, user) do
     tiles_list =

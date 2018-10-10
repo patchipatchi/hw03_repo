@@ -38,21 +38,24 @@ defmodule Memory.GameServer do
     def handle_call({:guess, game, user, card}, _from, state) do
         gg = Map.get(state, game, Game.new)
         |> Game.add_new_guess(card, user)
-        {:reply, Game.client_view(gg, user), Map.put(state, game, gg)}
+        vv = Game.client_view(gg, user)
+        {:reply, vv, Map.put(state, game, gg)}
     end
 
     # Handle restart
     def handle_call({:restart, game, user}, _from, state) do
         gg = Map.get(state, game, Game.new)
         |> Game.new
-        {:reply, Game.client_view(gg, user), Map.put(state, game, gg)}
+        vv = Game.client_view(gg, user)            
+        {:reply, vv, Map.put(state, game, gg)}
     end
 
     # Handle eval
     def handle_call({:eval, game, user}, _from, state) do
         gg = Map.get(state, game, Game.new)
         |> Game.eval_guesses
-        {:reply, Game.client_view(gg, user), Map.put(state, game, gg)}
+        vv = Game.client_view(gg, user)
+        {:reply, vv, Map.put(state, game, gg)}
     end
 
 end

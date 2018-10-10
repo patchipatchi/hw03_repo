@@ -1,12 +1,13 @@
 defmodule MemoryWeb.GamesChannel do
   use MemoryWeb, :channel
 
-  alias Memory.Game
   alias Memory.GameServer
+  alias Memory.Game
 
   def join("games:" <> game, payload, socket) do
     if authorized?(payload) do
       socket = assign(socket, :game, game)
+      game = Game.add_player(game, socket.assigns[:user])
       view = GameServer.view(game, socket.assigns[:user])
       {:ok, %{"join" => game, "game" => view}, socket}
     else
@@ -14,7 +15,7 @@ defmodule MemoryWeb.GamesChannel do
     end
   end
 
-  def handle_in("guess", payload, socket) do
+  def handle_in("guess", payload, socket) do 
     view = GameServer.guess(socket.assigns[:game], socket.assigns[:user], payload)
     {:reply, {:ok, %{ "game" => view}}, socket}
   end

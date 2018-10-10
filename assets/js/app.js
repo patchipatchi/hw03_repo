@@ -23,9 +23,11 @@ import game_init from "./starter-game";
 function form_init() {
   $('#game-button').click(() => {
     let xx = $('#game-input').val();
-    window.location = 'game/' + xx;
+    let yy = $('#user-input').val();
+    window.location = 'game/' + xx + '/';
   });
 }
+
 
 function start() {
   let root = document.getElementById('root');
