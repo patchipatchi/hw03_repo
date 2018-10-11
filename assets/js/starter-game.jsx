@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
-export default function game_init(root, channel) {
-  ReactDOM.render(<Starter channel={channel} />, root);
+export default function game_init(root, channel, user_id) {
+  ReactDOM.render(<Starter channel={channel} user_id={user_id} />, root);
 }
 
 class Starter extends React.Component {
@@ -11,6 +11,7 @@ class Starter extends React.Component {
     super(props);
 
     this.channel = props.channel;
+    this.user_id = props.user_id;
     this.state = {
     };
 
@@ -31,7 +32,7 @@ class Starter extends React.Component {
 
   guess(_ev) {
     if (this.state.total_guesses % 2 == 1) {
-      this.channel.push("guess", _ev.target.id)
+      this.channel.push("guess", _ev.target.id, this.user_id)
         .receive("ok", this.gotView.bind(this));
       console.log("even")
       sleep(1000).then(() => {
@@ -40,7 +41,7 @@ class Starter extends React.Component {
       })
     }
     else {
-      this.channel.push("guess", _ev.target.id)
+      this.channel.push("guess", _ev.target.id, this.user_id)
         .receive("ok", this.gotView.bind(this));
     }
   }
@@ -63,7 +64,7 @@ class Starter extends React.Component {
           </div>
           <div className="column">
             <p>
-              YOU WON IN {this.state.total_guesses} GUESSES
+              Player {this.state.total_guesses} GUESSES
           </p>
           </div>
         </div>

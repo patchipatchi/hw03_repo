@@ -28,7 +28,7 @@ defmodule Memory.Game do
   end
 
   # The client view 
-  def client_view(game_state, user) do
+  def client_view(game_state) do
     tiles_list =
       Enum.map(game_state.tiles, fn x ->
         if x.show == true do

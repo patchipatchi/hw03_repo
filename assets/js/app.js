@@ -21,21 +21,23 @@ import socket from "./socket"
 import game_init from "./starter-game";
 
 function form_init() {
+  let user_id = window.userName;
   $('#game-button').click(() => {
-    let xx = $('#game-input').val();
-    let yy = $('#user-input').val();
-    window.location = 'game/' + xx + '/';
+    xx = $('#game-input').val();
+    window.location = 'game/' + xx + '?name=' + user_id;
   });
 }
 
-
 function start() {
   let root = document.getElementById('root');
+  let user_id = window.userName;
   if (root) {
     socket.connect();
     let channel = socket.channel("games:" + window.gameName, {});
     // We want to join in the react component.
-    game_init(root, channel);
+    game_init(root, channel, user_id);
+    console.log(window.gameName)
+    console.log(user_id)
   }
 
   if (document.getElementById('game-input')) {
