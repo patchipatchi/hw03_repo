@@ -12,27 +12,30 @@ class Starter extends React.Component {
 
     this.channel = props.channel;
     this.user_id = props.user_id;
-    this.state = {
-    };
+    this.state = {};
 
     this.channel.join()
       .receive("ok", this.gotView.bind(this))
       .receive("error", resp => { console.log("Unable to join", resp) });
-  
 
-    this.channel.on("update_view", game_state => {
-        console.log("update")
-	console.log(game_state)
-        this.setState(game_state)
-    })
-}
+
+    // this.channel.on("update_view", game_state => {
+    //   console.log("update")
+    //   console.log(game_state)
+    //   this.setState(game_state)
+    // })
+  }
   gotView(view) {
     this.setState(view.game);
   }
 
   restart(view) {
-    this.channel.push("restart", {})
-      .receive("ok", this.gotView.bind(this));
+    if (this.user_id == this.state.player1_name || this.user_id == this.state.player2_name) {
+      this.channel.push("restart", {})
+        .receive("ok", this.gotView.bind(this));
+    } else {
+      return
+    }
   }
 
   guess(_ev) {
@@ -85,7 +88,7 @@ class Starter extends React.Component {
             </div>
             <div className="column">
               <p>
-                <button onClick={this.restart.bind(this)}>RESTART</button>
+                <button onClick={this.restart.bind(this)}>GAME LOBBY</button>
               </p>
             </div>
             <div className="column">
