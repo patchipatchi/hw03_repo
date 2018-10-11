@@ -66,6 +66,10 @@ class Starter extends React.Component {
     }
   }
 
+  refreshPage() {
+    window.location.reload()
+  }
+
   render() {
     console.log("state: ", this.state)
 
@@ -74,6 +78,7 @@ class Starter extends React.Component {
       html.push(
         <div>
           <p>In game lobby. Waiting for other player.</p>
+          <button type="button" onClick={this.refreshPage.bind(this)}> REFRESH</button>
         </div>
       );
     }
