@@ -46,8 +46,21 @@ class Starter extends React.Component {
     }
   }
 
+  isWinner() {
+    if (this.state.player1_points > this.state.player2_points) {
+      return this.state.player1_name + " wins!";
+    }
+    else if (this.state.player1_points < this.state.player2_points) {
+      return this.state.player2_name + " wins!";
+    }
+    else {
+      return this.state.player1_name + " and " + this.state.player2_name + " wins!";
+    }
+  }
+
   render() {
     console.log("state: ", this.state)
+
 
     let html = _.every(this.state.tiles, ["show", true]) ?
       <div>
@@ -64,8 +77,8 @@ class Starter extends React.Component {
           </div>
           <div className="column">
             <p>
-              Player {this.state.total_guesses} GUESSES
-          </p>
+              {this.isWinner()}
+            </p>
           </div>
         </div>
       </div>
@@ -84,7 +97,12 @@ class Starter extends React.Component {
           </div>
           <div className="column">
             <p>
-              Guesses: {this.state.total_guesses}
+              {this.state.player1_name}'s Points: {this.state.player1_points}
+            </p>
+          </div>
+          <div className="column">
+            <p>
+              {this.state.player2_name}'s Points: {this.state.player2_points}
             </p>
           </div>
         </div>

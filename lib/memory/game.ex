@@ -8,23 +8,19 @@ defmodule Memory.Game do
     tiles_list = Enum.map(tiles_list_1, fn x -> Map.put(elem(x, 0), :id, elem(x, 1)) end)
 
     %{
-      total_guesses: 0,
+      total_guesses: 0, 
       current_guesses: [],
       tiles: tiles_list,
-      player: [%{name: "a", is_turn: true, points: 0}, %{name: "b", is_turn: false, points: 0}]
+      player: []
     }
   end
 
-  # Map players to their name and info 
-  def new(players) do 
-
-  end
-
-  def is_full(game) do
-    false
-  end
-
   def add_player(game, user) do 
+    if (length(game.player) == 0) do
+      Map.put(game, :player, game.player ++ [%{name: user, is_turn: true, points: 0}])
+    else
+      Map.put(game, :player, game.player ++ [%{name: user, is_turn: false, points: 0}])
+    end
   end
 
   # The client view 
@@ -45,7 +41,8 @@ defmodule Memory.Game do
       player2_points: Enum.at(game_state.player, 1)[:points],
       player1_turn: Enum.at(game_state.player, 0)[:is_turn],
       player2_turn: Enum.at(game_state.player, 1)[:is_turn],
-      tiles: tiles_list
+      tiles: tiles_list,
+      total_guesses: game_state.total_guesses
     }
   end
 
@@ -62,11 +59,9 @@ defmodule Memory.Game do
       current_guesses = game_state.current_guesses ++ [Enum.at(game_state.tiles, real_index).val]
       total_guesses = game_state.total_guesses + 1
 
-      %{
-        total_guesses: total_guesses,
-        current_guesses: current_guesses,
-        tiles: tiles
-      }
+      Map.put(game_state, :tiles, tiles)
+      |> Map.put(:total_guesses, total_guesses)
+      |> Map.put(:current_guesses, current_guesses)
     else
       game_state
     end
@@ -98,7 +93,7 @@ defmodule Memory.Game do
     end
   end
 
-  # Add a one to the player's points 
+  # Add  one to the player's points 
   def update_points(game_state) do
     if Enum.at(game_state.player, 0)[:is_turn] do
       points = Enum.at(game_state.player, 0)[:points] + 1

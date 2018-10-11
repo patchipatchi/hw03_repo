@@ -7,7 +7,7 @@ defmodule MemoryWeb.GamesChannel do
   def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
       game = BackupAgent.get(name) || Game.new()
-      Game.add_player(game, socket.assigns[:user])
+      game = Game.add_player(game, socket.assigns[:user])
       socket = socket
       |> assign(:game, game)
       |> assign(:name, name)
@@ -28,7 +28,7 @@ defmodule MemoryWeb.GamesChannel do
 
   def handle_in("restart", _payload, socket) do
     name = socket.assigns[:name]
-    game = Game.restart(socket.assigns[:game])
+    game = Game.new(socket.assigns[:game])
     socket = assign(socket, :game, game)
     BackupAgent.put(name, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
