@@ -14,6 +14,10 @@ class Starter extends React.Component {
     this.user_id = props.user_id;
     this.state = {
     };
+
+    this.channel.join()
+      .receive("ok", this.gotView.bind(this))
+      .receive("error", resp => { console.log("Unable to join", resp) });
   }
 
   gotView(view) {
@@ -53,26 +57,26 @@ class Starter extends React.Component {
     }
   }
 
-  joinGame() {
-    this.channel.join()
-      .receive("ok", this.gotView.bind(this))
-      .receive("error", resp => { console.log("Unable to join", resp) });
-    this.channel.push("in_lobby", this.user_id)
-      .receive("ok", this.gotView.bind(this));
-  }
+  // joinGame() {
+  //   this.channel.join()
+  //     .receive("ok", this.gotView.bind(this))
+  //     .receive("error", resp => { console.log("Unable to join", resp) });
+  //   this.channel.push("in_lobby", this.user_id)
+  //     .receive("ok", this.gotView.bind(this));
+  // }
 
   render() {
     console.log("state: ", this.state)
 
     var html = []
-    if (!this.state.in_lobby) {
-      html.push(
-        <div>
-          <button onClick={this.joinGame.bind(this)}>Join game</button>
-        </div>
-      );
-    }
-    else if (_.every(this.state.tiles, ["show", true])) {
+    // if (!this.state.in_lobby) {
+    //  html.push(
+    //    <div>
+    //      <button onClick={this.joinGame.bind(this)}>Join game</button>
+    //    </div>
+    //  );
+    // }
+    if (_.every(this.state.tiles, ["show", true])) {
       html.push(
         <div>
           <div className="row">
