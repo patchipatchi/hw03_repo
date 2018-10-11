@@ -21,7 +21,7 @@ defmodule MemoryWeb.GamesChannel do
 
   def handle_info({:after_join, game}, socket) do
     # Broadcast a refresh message to update the game state
-    broadcast! socket, "join", game
+    broadcast! socket, "update_view", Game.client_view(game)
     {:noreply, socket}
   end
 
@@ -30,7 +30,7 @@ defmodule MemoryWeb.GamesChannel do
     game = Game.add_new_guess(socket.assigns[:game], id, user_id)
     socket = assign(socket, :game, game)
     BackupAgent.put(name, game)
-    broadcast! socket, "guess", game
+    broadcast! socket, "update_view", Game.client_view(game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
 
@@ -38,7 +38,7 @@ defmodule MemoryWeb.GamesChannel do
     name = socket.assigns[:name]
     game = Game.new()
     socket = assign(socket, :game, game)
-    broadcast! socket, "guess", game
+    broadcast! socket, "update_view", Game.client_view(game)
     BackupAgent.put(name, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
@@ -47,9 +47,14 @@ defmodule MemoryWeb.GamesChannel do
     name = socket.assigns[:name]
     game = Game.eval_guesses(socket.assigns[:game])
     socket = assign(socket, :game, game)
-    broadcast! socket, "guess", game
+    broadcast! socket, "update_view", Game.client_view(game)
     BackupAgent.put(name, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
+  end
+
+  def handle_in("update_view", payload, socket) do
+    push socket, "update_view", payload
+    {:noreply, socket}
   end
 
   # Channels can be used in a request/response fashion
