@@ -57,26 +57,18 @@ class Starter extends React.Component {
     }
   }
 
-  // joinGame() {
-  //   this.channel.join()
-  //     .receive("ok", this.gotView.bind(this))
-  //     .receive("error", resp => { console.log("Unable to join", resp) });
-  //   this.channel.push("in_lobby", this.user_id)
-  //     .receive("ok", this.gotView.bind(this));
-  // }
-
   render() {
     console.log("state: ", this.state)
 
     var html = []
-    // if (!this.state.in_lobby) {
-    //  html.push(
-    //    <div>
-    //      <button onClick={this.joinGame.bind(this)}>Join game</button>
-    //    </div>
-    //  );
-    // }
-    if (_.every(this.state.tiles, ["show", true])) {
+    if (this.state.player_number < 2) {
+      html.push(
+        <div>
+          <p>In game lobby. Waiting for other player.</p>
+        </div>
+      );
+    }
+    else if (_.every(this.state.tiles, ["show", true])) {
       html.push(
         <div>
           <div className="row">

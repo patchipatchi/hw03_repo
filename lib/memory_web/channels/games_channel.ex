@@ -25,16 +25,6 @@ defmodule MemoryWeb.GamesChannel do
     {:noreply, socket}
   end
 
-  # def handle_in("in_lobby", user_id, socket) do 
-  #   name = socket.assigns[:name]
-  #   game = Game.in_lobby(socket.assigns[:game], user_id)
-  #   socket = assign(socket, :game, game)
-  #   BackupAgent.put(name, game)
-  #   broadcast! socket, "in_lobby", game
-  #   {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
-  # end
-
-
   def handle_in("guess", %{"id" => id, "user" => user_id}, socket) do 
     name = socket.assigns[:name]
     game = Game.add_new_guess(socket.assigns[:game], id, user_id)
@@ -46,7 +36,7 @@ defmodule MemoryWeb.GamesChannel do
 
   def handle_in("restart", _payload, socket) do
     name = socket.assigns[:name]
-    game = Game.new(socket.assigns[:game])
+    game = Game.new()
     socket = assign(socket, :game, game)
     broadcast! socket, "guess", game
     BackupAgent.put(name, game)
