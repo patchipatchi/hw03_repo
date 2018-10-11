@@ -12,10 +12,17 @@ defmodule MemoryWeb.GamesChannel do
       |> assign(:game, game)
       |> assign(:name, name)
       BackupAgent.put(name, game)
+      send(self, {:after_join, game})
       {:ok, %{"join" => name, "game" => Game.client_view(game)}, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
+  end
+
+  def handle_info({:after_join, game}, socket) do
+    # Broadcast a refresh message to update the game state
+    broadcast! socket, "refresh", game
+    {:noreply, socket}
   end
 
   def handle_in("guess", %{"id" => id, "user" => user_id}, socket) do 
@@ -23,6 +30,7 @@ defmodule MemoryWeb.GamesChannel do
     game = Game.add_new_guess(socket.assigns[:game], id, user_id)
     socket = assign(socket, :game, game)
     BackupAgent.put(name, game)
+    broadcast! socket, "refresh", game
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
 
@@ -30,6 +38,7 @@ defmodule MemoryWeb.GamesChannel do
     name = socket.assigns[:name]
     game = Game.new(socket.assigns[:game])
     socket = assign(socket, :game, game)
+    broadcast! socket, "refresh", game
     BackupAgent.put(name, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
@@ -38,6 +47,7 @@ defmodule MemoryWeb.GamesChannel do
     name = socket.assigns[:name]
     game = Game.eval_guesses(socket.assigns[:game])
     socket = assign(socket, :game, game)
+    broadcast! socket, "refresh", game
     BackupAgent.put(name, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end

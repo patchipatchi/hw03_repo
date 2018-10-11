@@ -16,11 +16,16 @@ defmodule Memory.Game do
   end
 
   def add_player(game, user) do 
-    if (length(game.player) == 0) do
-      Map.put(game, :player, game.player ++ [%{name: user, is_turn: true, points: 0}])
-    else
-      Map.put(game, :player, game.player ++ [%{name: user, is_turn: false, points: 0}])
-    end
+    player_names = Enum.map(game.player, fn g -> g.name end)
+    if (!Enum.member?(player_names, user)) do
+		  if (length(game.player) == 0) do
+		    Map.put(game, :player, game.player ++ [%{name: user, is_turn: true, points: 0}])
+		  else
+		    Map.put(game, :player, game.player ++ [%{name: user, is_turn: false, points: 0}])
+		  end
+	  else
+		  game
+	  end
   end
 
   # The client view 
@@ -112,7 +117,8 @@ defmodule Memory.Game do
     player2 =
       Map.put(Enum.at(game_state.player, 1), :is_turn, !Enum.at(game_state.player, 1).is_turn)
 
-    players = [player1, player2]
+    players = List.update_at(game_state.player, 0, fn p -> player1 end)
+    players = List.update_at(game_state.player, 1, fn p -> player2 end)
 
     Map.put(game_state, :player, players)
   end
