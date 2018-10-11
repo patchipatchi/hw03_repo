@@ -48,7 +48,8 @@ defmodule Memory.Game do
       player2_turn: Enum.at(game_state.player, 1)[:is_turn],
       total_guesses: game_state.total_guesses,
       tiles: tiles_list,
-      player_number: length(game_state.player)
+      player_number: length(game_state.player),
+      player_names: Enum.map(game_state.player, fn x -> x.name end)
     }
   end
 

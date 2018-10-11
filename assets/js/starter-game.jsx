@@ -66,19 +66,31 @@ class Starter extends React.Component {
     }
   }
 
-  refreshPage() {
-    window.location.reload()
+  is_player_in_state(){
+    return _.includes(this.state.player_names, this.user_id);
+  }
+  
+  send_join(){
+     this.channel.push("add_player", {pname: this.user_id})
+        .receive("ok", this.gotView.bind(this));
   }
 
   render() {
     console.log("state: ", this.state)
 
     var html = []
-    if (this.state.player_number < 2) {
+    if (!this.is_player_in_state()) {
+      html.push(
+        <div>
+          <p>Game Lobby</p>
+          <button type="button" onClick={this.send_join.bind(this)}>JOIN</button>
+        </div>
+      );
+    }
+    else if (this.state.player_number < 2) {
       html.push(
         <div>
           <p>In game lobby. Waiting for other player.</p>
-          <button type="button" onClick={this.refreshPage.bind(this)}> REFRESH</button>
         </div>
       );
     }

@@ -7,7 +7,7 @@ defmodule MemoryWeb.GamesChannel do
   def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
       game = BackupAgent.get(name) || Game.new()
-      game = Game.add_player(game, socket.assigns[:user])
+ #    game = Game.add_player(game, socket.assigns[:user])
       socket = socket
       |> assign(:name, name)
       BackupAgent.put(name, game)
@@ -22,6 +22,15 @@ defmodule MemoryWeb.GamesChannel do
     # Broadcast a refresh message to update the game state
     broadcast! socket, "update_view", Game.client_view(game)
     {:noreply, socket}
+  end
+
+  def handle_in("add_player", %{"pname" => user_id}, socket) do
+    name = socket.assigns[:name]
+    game = Game.add_player(BackupAgent.get(name), user_id)
+    socket = assign(socket, :name, name)
+    BackupAgent.put(name, game)
+    broadcast! socket, "update_view", Game.client_view(game)
+    {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
 
   def handle_in("guess", %{"id" => id, "user" => user_id}, socket) do 
