@@ -79,7 +79,7 @@ class Starter extends React.Component {
     console.log("state: ", this.state)
 
     var html = []
-    if (!this.is_player_in_state()) {
+    if (this.state.player_number < 2 && !this.is_player_in_state()) {
       html.push(
         <div>
           <p>Game Lobby</p>
