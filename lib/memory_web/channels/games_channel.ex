@@ -18,10 +18,9 @@ defmodule MemoryWeb.GamesChannel do
     end
   end
 
-  def handle_in("guess", payload, socket) do 
-    IO.inspect(payload)
+  def handle_in("guess", %{"id" => id, "user" => user_id}, socket) do 
     name = socket.assigns[:name]
-    game = Game.add_new_guess(socket.assigns[:game], payload)
+    game = Game.add_new_guess(socket.assigns[:game], id, user_id)
     socket = assign(socket, :game, game)
     BackupAgent.put(name, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}

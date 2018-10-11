@@ -32,7 +32,7 @@ class Starter extends React.Component {
 
   guess(_ev) {
     if (this.state.total_guesses % 2 == 1) {
-      this.channel.push("guess", _ev.target.id, this.user_id)
+      this.channel.push("guess", { id: _ev.target.id, user: this.user_id })
         .receive("ok", this.gotView.bind(this));
       console.log("even")
       sleep(1000).then(() => {
@@ -41,7 +41,7 @@ class Starter extends React.Component {
       })
     }
     else {
-      this.channel.push("guess", _ev.target.id, this.user_id)
+      this.channel.push("guess", { id: _ev.target.id, user: this.user_id })
         .receive("ok", this.gotView.bind(this));
     }
   }
