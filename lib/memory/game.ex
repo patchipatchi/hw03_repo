@@ -123,7 +123,7 @@ defmodule Memory.Game do
       Map.put(Enum.at(game_state.player, 1), :is_turn, !Enum.at(game_state.player, 1).is_turn)
 
     players = List.update_at(game_state.player, 0, fn p -> player1 end)
-    players = List.update_at(game_state.player, 1, fn p -> player2 end)
+    |> List.update_at(1, fn p -> player2 end)
 
     Map.put(game_state, :player, players)
   end
