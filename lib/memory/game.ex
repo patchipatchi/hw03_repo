@@ -103,10 +103,14 @@ defmodule Memory.Game do
   def update_points(game_state) do
     if Enum.at(game_state.player, 0)[:is_turn] do
       points = Enum.at(game_state.player, 0)[:points] + 1
-      Map.put(Enum.at(game_state.player, 0), :points, points)
+      player_1 = Map.put(Enum.at(game_state.player, 0), :points, points)
+      player = List.update_at(game_state.player, 0, fn x -> player_1 end)
+      Map.put(game_state, :player, player)
     else
       points = Enum.at(game_state.player, 1)[:points] + 1
-      Map.put(Enum.at(game_state.player, 1), :points, points)
+      player_2 = Map.put(Enum.at(game_state.player, 1), :points, points)
+      player = List.update_at(game_state.player, 1, fn x -> player_2 end)
+      Map.put(game_state, :player, player)
     end
   end
 
