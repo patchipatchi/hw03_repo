@@ -11,8 +11,21 @@ defmodule Memory.Game do
       total_guesses: 0, 
       current_guesses: [],
       tiles: tiles_list,
-      player: []
+      player: [],
+      in_lobby: true
     }
+  end
+
+  def in_lobby(game_state, user) do
+    player = 
+      Enum.map(game_state.player, fn x ->
+        if x.name == user do 
+          Map.put(x, :in_lobby, !Enum.at(game_state.player, x).in_lobby)
+        else 
+          x
+        end
+      end)
+    Map.put(game_state, :player, player)
   end
 
   def add_player(game, user) do 
@@ -47,7 +60,8 @@ defmodule Memory.Game do
       player1_turn: Enum.at(game_state.player, 0)[:is_turn],
       player2_turn: Enum.at(game_state.player, 1)[:is_turn],
       tiles: tiles_list,
-      total_guesses: game_state.total_guesses
+      total_guesses: game_state.total_guesses,
+      in_lobby: game_state.in_lobby
     }
   end
 
