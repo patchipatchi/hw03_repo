@@ -54,6 +54,7 @@ defmodule Memory.Game do
 
   # Add a new guess to the list of current guesses, return if there are already 2 gueses in the list
   def add_new_guess(game_state, index, player) do
+    IO.inspect(game_state)
     if length(game_state.current_guesses) < 2 && check_is_name_and_turn(game_state, player) do
       real_index = elem(Integer.parse(index), 0)
 

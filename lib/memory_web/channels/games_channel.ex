@@ -9,7 +9,6 @@ defmodule MemoryWeb.GamesChannel do
       game = BackupAgent.get(name) || Game.new()
       game = Game.add_player(game, socket.assigns[:user])
       socket = socket
-      |> assign(:game, game)
       |> assign(:name, name)
       BackupAgent.put(name, game)
       send(self, {:after_join, game})
@@ -27,8 +26,8 @@ defmodule MemoryWeb.GamesChannel do
 
   def handle_in("guess", %{"id" => id, "user" => user_id}, socket) do 
     name = socket.assigns[:name]
-    game = Game.add_new_guess(socket.assigns[:game], id, user_id)
-    socket = assign(socket, :game, game)
+    game = Game.add_new_guess(BackupAgent.get(name), id, user_id)
+    socket = assign(socket, :name, name)
     BackupAgent.put(name, game)
     broadcast! socket, "update_view", Game.client_view(game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
@@ -37,7 +36,7 @@ defmodule MemoryWeb.GamesChannel do
   def handle_in("restart", _payload, socket) do
     name = socket.assigns[:name]
     game = Game.new()
-    socket = assign(socket, :game, game)
+    socket = assign(socket, :name, name)
     broadcast! socket, "update_view", Game.client_view(game)
     BackupAgent.put(name, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
@@ -45,7 +44,7 @@ defmodule MemoryWeb.GamesChannel do
 
   def handle_in("eval", _payload, socket) do
     name = socket.assigns[:name]
-    game = Game.eval_guesses(socket.assigns[:game])
+    game = Game.eval_guesses(BackupAgent.get(name))
     socket = assign(socket, :game, game)
     broadcast! socket, "update_view", Game.client_view(game)
     BackupAgent.put(name, game)

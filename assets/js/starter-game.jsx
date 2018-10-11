@@ -19,11 +19,11 @@ class Starter extends React.Component {
       .receive("error", resp => { console.log("Unable to join", resp) });
 
 
-    // this.channel.on("update_view", game_state => {
-    //   console.log("update")
-    //   console.log(game_state)
-    //   this.setState(game_state)
-    // })
+    this.channel.on("update_view", game_state => {
+      console.log("update")
+      console.log(game_state)
+      this.setState(game_state)
+    })
   }
   gotView(view) {
     this.setState(view.game);
